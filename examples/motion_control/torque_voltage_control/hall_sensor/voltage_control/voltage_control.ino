@@ -9,22 +9,38 @@
  */
 #include <SimpleFOC.h>
 
+// DRV8305 pins connections
+// don't forget to connect the common ground pin
+#define   INH_A   9
+#define   INH_B   10
+#define   INH_C   11
+#define   EN_GATE 8
+#define   HALL_A  5
+#define   HALL_B  6
+#define   HALL_C  7
 
-// BLDC motor & driver instance
-BLDCMotor motor = BLDCMotor(11);
-BLDCDriver3PWM driver = BLDCDriver3PWM(9, 5, 6, 8);
+#define   POLE_PAIRS  8
+
+// BLDC motor instance
+BLDCMotor motor = BLDCMotor(POLE_PAIRS);
+// BLDC driver instance
+BLDCDriver3PWM driver = BLDCDriver3PWM(INH_A, INH_B, INH_C, EN_GATE);
 // Stepper motor & driver instance
 //StepperMotor motor = StepperMotor(50);
 //StepperDriver4PWM driver = StepperDriver4PWM(9, 5, 10, 6,  8);
 
 // hall sensor instance
-HallSensor sensor = HallSensor(2, 3, 4, 11);
+HallSensor sensor = HallSensor(HALL_A, HALL_B, HALL_C, POLE_PAIRS);
 
 // Interrupt routine intialisation
 // channel A and B callbacks
 void doA(){sensor.handleA();}
 void doB(){sensor.handleB();}
 void doC(){sensor.handleC();}
+
+// commander interface // TODO: may not work
+// Commander command = Commander(Serial);
+// void onMotor(char* cmd){ command.motor(&motor, cmd); }
 
 void setup() { 
   // use monitoring with serial 
@@ -41,14 +57,16 @@ void setup() {
   motor.linkSensor(&sensor);
 
   // driver config
+  // TODO: may add some config to initialize DRV8305
+
   // power supply voltage [V]
-  driver.voltage_power_supply = 12;
+  driver.voltage_power_supply = 14.8;
   driver.init();
   // link driver
   motor.linkDriver(&driver);
 
   // aligning voltage
-  motor.voltage_sensor_align = 3;
+  motor.voltage_sensor_align = 5;
   
   // choose FOC modulation (optional)
   motor.foc_modulation = FOCModulationType::SpaceVectorPWM;
@@ -78,6 +96,9 @@ void setup() {
   // align sensor and start FOC
   motor.initFOC();
 
+  // define the motor id
+  // command.add('M', onMotor, "motor");
+
   Serial.println("Motor ready.");
   Serial.println("Set the target voltage using serial terminal:");
   _delay(1000);
@@ -103,6 +124,8 @@ void loop() {
   
   // communicate with the user
   serialReceiveUserCommand();
+
+  // command.run();
 }
 
 
