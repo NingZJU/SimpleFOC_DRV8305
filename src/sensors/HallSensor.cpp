@@ -159,6 +159,10 @@ void HallSensor::init(){
   A_active= digitalRead(pinA);
   B_active = digitalRead(pinB);
   C_active = digitalRead(pinC);
+  // TODO: 调试
+  Serial.print("Hall 1");Serial.println(A_active);
+  Serial.print("Hall 2");Serial.println(B_active);
+  Serial.print("Hall 3");Serial.println(C_active);
   updateState();
   
   pulse_timestamp = _micros();

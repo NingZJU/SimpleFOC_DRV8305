@@ -27,7 +27,13 @@ void doB(){sensor.handleB();}
 void doC(){sensor.handleC();}
 
 void setup() { 
-  
+  // use monitoring with serial 
+  Serial.begin(115200);
+  // comment out if not needed
+  motor.useMonitoring(Serial);
+  // 调试
+  pinMode(LED_BUILTIN, OUTPUT);
+
   // initialize encoder sensor hardware
   sensor.init();
   sensor.enableInterrupts(doA, doB, doC); 
@@ -50,10 +56,22 @@ void setup() {
   // set motion control loop to be used
   motor.controller = ControlType::voltage;
 
-  // use monitoring with serial 
-  Serial.begin(115200);
-  // comment out if not needed
-  motor.useMonitoring(Serial);
+  // controller configuration based on the control type 
+  motor.PID_velocity.P = 0.2;
+  motor.PID_velocity.I = 20;
+
+  // velocity low pass filtering time constant
+  motor.LPF_velocity.Tf = 0.01;
+
+  // angle loop controller
+  motor.P_angle.P = 20;
+  
+  // angle loop velocity limit
+  motor.velocity_limit = 50;
+  // default voltage_power_supply
+  motor.voltage_limit = 24;
+
+  
 
   // initialize motor
   motor.init();
@@ -81,6 +99,7 @@ void loop() {
   // this function can be run at much lower frequency than loopFOC() function
   // You can also use motor.move() and set the motor.target in the code
   motor.move(target_voltage);
+  digitalWrite(LED_BUILTIN, HIGH);
   
   // communicate with the user
   serialReceiveUserCommand();
