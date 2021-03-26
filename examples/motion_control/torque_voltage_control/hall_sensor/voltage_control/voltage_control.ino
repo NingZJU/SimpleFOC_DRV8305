@@ -19,6 +19,8 @@
 #define   HALL_B  6
 #define   HALL_C  7
 
+#define   WAKE    2
+
 #define   POLE_PAIRS  8
 
 // BLDC motor instance
@@ -58,6 +60,8 @@ void setup() {
 
   // driver config
   // TODO: may add some config to initialize DRV8305
+  pinMode(WAKE, OUTPUT);
+  digitalWrite(WAKE, HIGH);
 
   // power supply voltage [V]
   driver.voltage_power_supply = 14.8;
