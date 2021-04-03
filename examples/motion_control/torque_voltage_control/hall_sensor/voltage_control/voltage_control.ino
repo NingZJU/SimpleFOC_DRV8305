@@ -19,6 +19,11 @@
 #define   HALL_B  6
 #define   HALL_C  7
 
+<<<<<<< HEAD
+=======
+#define   WAKE    2
+
+>>>>>>> 933ca5cdbce46b5f40321c07aeb186d533dca009
 #define   POLE_PAIRS  8
 
 // BLDC motor instance
@@ -39,11 +44,22 @@ void doB(){sensor.handleB();}
 void doC(){sensor.handleC();}
 
 // commander interface // TODO: may not work
+<<<<<<< HEAD
 Commander command = Commander(Serial);
 void onMotor(char* cmd){ command.motor(&motor, cmd); }
+=======
+// Commander command = Commander(Serial);
+// void onMotor(char* cmd){ command.motor(&motor, cmd); }
+>>>>>>> 933ca5cdbce46b5f40321c07aeb186d533dca009
 
 void setup() { 
-  
+  // use monitoring with serial 
+  Serial.begin(115200);
+  // comment out if not needed
+  motor.useMonitoring(Serial);
+  // 调试
+  pinMode(LED_BUILTIN, OUTPUT);
+
   // initialize encoder sensor hardware
   sensor.init();
   sensor.enableInterrupts(doA, doB, doC); 
@@ -52,6 +68,11 @@ void setup() {
 
   // driver config
   // TODO: may add some config to initialize DRV8305
+<<<<<<< HEAD
+=======
+  pinMode(WAKE, OUTPUT);
+  digitalWrite(WAKE, HIGH);
+>>>>>>> 933ca5cdbce46b5f40321c07aeb186d533dca009
 
   // power supply voltage [V]
   driver.voltage_power_supply = 14.8;
@@ -60,7 +81,7 @@ void setup() {
   motor.linkDriver(&driver);
 
   // aligning voltage
-  motor.voltage_sensor_align = 3;
+  motor.voltage_sensor_align = 5;
   
   // choose FOC modulation (optional)
   motor.foc_modulation = FOCModulationType::SpaceVectorPWM;
@@ -83,10 +104,14 @@ void setup() {
   // default voltage_power_supply
   motor.voltage_limit = 24;
 
+<<<<<<< HEAD
   // use monitoring with serial 
   Serial.begin(115200);
   // comment out if not needed
   motor.useMonitoring(Serial);
+=======
+  
+>>>>>>> 933ca5cdbce46b5f40321c07aeb186d533dca009
 
   // initialize motor
   motor.init();
@@ -94,7 +119,11 @@ void setup() {
   motor.initFOC();
 
   // define the motor id
+<<<<<<< HEAD
   command.add('M', onMotor, "motor");
+=======
+  // command.add('M', onMotor, "motor");
+>>>>>>> 933ca5cdbce46b5f40321c07aeb186d533dca009
 
   Serial.println("Motor ready.");
   Serial.println("Set the target voltage using serial terminal:");
@@ -117,11 +146,16 @@ void loop() {
   // this function can be run at much lower frequency than loopFOC() function
   // You can also use motor.move() and set the motor.target in the code
   motor.move(target_voltage);
+  digitalWrite(LED_BUILTIN, HIGH);
   
   // communicate with the user
   serialReceiveUserCommand();
 
+<<<<<<< HEAD
   command.run();
+=======
+  // command.run();
+>>>>>>> 933ca5cdbce46b5f40321c07aeb186d533dca009
 }
 
 
